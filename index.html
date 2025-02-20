@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather API Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .weather-info {
+            margin-top: 20px;
+            background: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather API Viewer</h1>
+        <button id="fetchData">Load Weather</button>
+        <div id="dataContainer" class="weather-info"></div>
+    </div>
+    
+    <script>
+        document.getElementById('fetchData').addEventListener('click', async () => {
+    try {
+        const response = await fetch('http://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=678cf347bd20e720e6109ada7192d7fa');
+        const data = await response.json();
+
+        // Check if response contains valid data
+        if (data.cod !== 200) {
+            throw new Error(data.message || "Invalid API response");
+        }
+
+        const container = document.getElementById('dataContainer');
+        container.innerHTML = '';
+
+        const weatherElement = document.createElement('div');
+        weatherElement.innerHTML = `
+            <h2>Weather in ${data.name}</h2>
+            <p>Temperature: ${data.main.temp}°C</p>
+            <p>Humidity: ${data.main.humidity}%</p>
+            <p>Weather: ${data.weather[0].description}</p>
+        `;
+        container.appendChild(weatherElement);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        document.getElementById('dataContainer').innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+    }
+});
+
+    </script>
+</body>
+</html>
